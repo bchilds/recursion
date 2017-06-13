@@ -7,6 +7,7 @@ var stringifyJSON = function(obj) {
   // input is any type of object or primitive or array, including functions and undefined
   // per suggestion: think of single case, then of two, then of (n)
 
+  var output = "";
   //check type of input
   var objType = typeof obj;
 
@@ -14,35 +15,35 @@ var stringifyJSON = function(obj) {
   if( obj === undefined || objType === "function" ){
   	return;
   }
-  	//base case (primitives)
-  	//string, number, boolean, obj ==== null, symbol, 
+
+	//base case (primitives)
+	//string, number, boolean, obj ==== null, symbol, 
+	if(objType != "object"){
     if( objType === "string"){
-
+    	output = obj;
     } else if( objType === "number"){
-
+    	output += "" + obj;
     } else if( objType === "boolean"){
-
+    	output += "" + obj;
     } else if( objType === "symbol"){
-
+    	output = "{}";
     } else if( obj === null ){
-
+    	output = "null"
     }
+    return output;
+	}
 
-
-  	//if it is any of the primitives
-  	  //handle accordingly
-
-  	//recursive cases( array, obj )
-  	//if it is an array
-  	if( Array.isArray(obj) ) {
-  	  //remember '[' and ']'
-  	  //iterate across length of array
-  	  //check type of input
-  	} else {
-  	  //otherwise, for each property in this object
-  	  //remember '{' and '}'
-  	  //check the value type  		
-  	}
+	//recursive cases( array, obj )
+	//if it is an array
+	if( Array.isArray(obj) ) {
+	  //remember '[' and ']'
+	  //iterate across length of array
+	  //check type of input
+	} else {
+	  //otherwise, for each property in this object
+	  //remember '{' and '}'
+	  //check the value type  		
+	}
 
 
 
