@@ -7,7 +7,7 @@ var stringifyJSON = function(obj) {
   // input is any type of object or primitive or array, including functions and undefined
   // per suggestion: think of single case, then of two, then of (n)
 
-  var output = "";
+  var output = '';
   //check type of input
   var objType = typeof obj;
 
@@ -20,7 +20,7 @@ var stringifyJSON = function(obj) {
 	//string, number, boolean, obj ==== null, symbol, 
 	if(objType != "object"){
     if( objType === "string"){
-    	output = obj;
+    	output = '"' + obj + '"';
     } else if( objType === "number"){
     	output += "" + obj;
     } else if( objType === "boolean"){
@@ -45,6 +45,10 @@ var stringifyJSON = function(obj) {
 		  //check type of input
 		  output += "[";
 		  //iterate across array here
+		  	for(var i = 0; i < obj.length; i++){
+		  		output = output + stringifyJSON(obj[i]);
+		  		if(i+1 < obj.length){ output += ',' }; //add comma in-between array elements
+		  	}
 		  output += "]";
 		} else {
 		  //otherwise, for each property in this object
