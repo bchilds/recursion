@@ -54,8 +54,15 @@ var stringifyJSON = function(obj) {
 		  //otherwise, for each property in this object
 		  //remember '{' and '}'
 		  output += "{";
-		  //check the value type  	
-		  //for each property...
+		  //check the value type  
+		  var index = 0;
+		  for( var prop in obj ){
+		  	if(stringifyJSON(obj[prop])){
+			  	output += '"' + prop + '":' + stringifyJSON(obj[prop]);
+			  	if(index + 1 < Object.keys(obj).length){output += ','};
+		  	}
+		  	index++;
+		  }
 		  output += "}";	
 		}
 		return output;
