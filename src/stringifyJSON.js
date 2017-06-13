@@ -4,5 +4,22 @@
 // but you don't so you're going to write it from scratch:
 
 var stringifyJSON = function(obj) {
-  // your code goes here
+  // input is any type of object or primitive or array, including functions and undefined
+
+  //check type of input
+  	//if it is a function or undefined, ignore
+  	//if it is any of the primitives
+  		//handle accordingly
+  	//if it is an array
+  		//remember '[' and ']'
+  		//iterate across length of array
+  		//check type of input
+  	//otherwise, for each property
+  		//remember '{' and '}'
+  		//check the value type
+
+
+  		//this will be done with a recursive function. Base cases are any of the primitives, since all objects/arrays eventually reduce down to a primitive
+
+  		//output is a string version of the input
 };
