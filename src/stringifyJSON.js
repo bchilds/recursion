@@ -27,24 +27,35 @@ var stringifyJSON = function(obj) {
     	output += "" + obj;
     } else if( objType === "symbol"){
     	output = "{}";
-    } else if( obj === null ){
-    	output = "null"
     }
     return output;
-	}
+	} else { //if it IS an object...
 
-	//recursive cases( array, obj )
-	//if it is an array
-	if( Array.isArray(obj) ) {
-	  //remember '[' and ']'
-	  //iterate across length of array
-	  //check type of input
-	} else {
-	  //otherwise, for each property in this object
-	  //remember '{' and '}'
-	  //check the value type  		
-	}
+		//last base case, since null returns typeof object
+		if( obj === null ){
+    	output = "null"
+    	return output;
+    }
 
+		//recursive cases( array, obj )
+		//if it is an array
+		if( Array.isArray(obj) ) {
+		  //remember '[' and ']'
+		  //iterate across length of array
+		  //check type of input
+		  output += "[";
+		  //iterate across array here
+		  output += "]";
+		} else {
+		  //otherwise, for each property in this object
+		  //remember '{' and '}'
+		  output += "{";
+		  //check the value type  	
+		  //for each property...
+		  output += "}";	
+		}
+		return output;
+	}
 
 
   	  //this will be done with a recursive function. Base cases are any of the primitives, since all objects/arrays eventually reduce down to a primitive
