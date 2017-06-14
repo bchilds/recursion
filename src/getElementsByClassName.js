@@ -10,7 +10,7 @@ var getElementsByClassName = function(className) {
   //input: className that we are searching for (string)
   var output = [];
   var body = document.body;
-
+  console.log(body);
   //will need to search all the child nodes of the body, and all child nodes of the child nodes
   //need a function which checks for classname, number of childNodes, and then runs on each child node if any
 
@@ -19,22 +19,34 @@ var getElementsByClassName = function(className) {
 
   function check(elem, className) {
 	 	//base case - childNodes is empty
-	 	if ( elem.childNodes.length === 0 ) {
+	 	if ( elem.childNodes.length === 0 && elem.nodeType === 1) { //nodeType of 1 to make sure it is an element
 	 		 //classList contains target
-	 		 if( elemen.classList.contains(className) ) { 
+	 		 if( elem.classList.contains(className) ) { 
 	 		 	output.push(elem);
 	 		 	return; 
 	 		 } else {
 	 		 //classList does not contain target
 	 		  return;
 	 		}
+	 	} else {
+	  	//recursive case - childNodes not empty, classList contains target
+	  	//recursive case - childNodes not empty, classList does not contain target
+	  	if(elem.childNodes.length > 0){
+	  		if( elem.classList.contains(className) ) {
+	  			output.push(elem);
+	  		}
+	  		//iterate across all childNodes
+	  		for(var i = 0; i < elem.childNodes.length; i++){
+	  			check(elem.childNodes[i], className);
+	  		}
+	  	}
+	  	return;
 	 	}
-
-	  //recursive case - childNodes not empty, classList contains target
-	  //recursive case - childNodes not empty, classList does not contain target
   }
 
-
+  //call on body
+  //console.log(body);
+  check(body, className);
 
 
   //output: array of all nodes with class in input?
