@@ -4,34 +4,31 @@
 // but you're not, so you'll write it from scratch:
 var parseJSON = function(json) {
   //input always a string
-  var index = 0;
-  var output = {};
+  var output;
 
-  function objOrArrayParse(json){
-	  //parseObj or Array
-		//first char is a { or [
-		//slice off outer object/array
-		//determine if next char an object or a value, call function for that
+  function parseObj(json){
+	  //parseObj
+		//first char is a {
+		//find : index
 
-	  if(json[index] === '{') {
+  } //end parseObj
 
-  	} else if(json[index] === '[') {
+  function parseArray(json){
 
-  	}
+  } //end parseArray
 
+  function parseString(json){
+ //end parseString
   }
 
+  function parseValue(json){
 
+  } //end parseValue
 
-  //parseValue
-  	//check if string
-  		//if yes, find ending "
-  		//worry about escape characters
-  	//check if...
-  		//: next char, make this key and call value or object on next section (after the :)
-  		//, next char, call value or object on next section (after the ,)
-  //function valOrObjOrArray
-  	//takes in a string, returns whether the next item in array is a value, array or object, runs appropriate function
+  function determineParse(json){
+  	//run on json to break it into elements and run the appropriate parse on each element
+  	//elements delimited by , outside of a pair of "" [may have a comma within a string]
+  }
 
   	return output;
 };
