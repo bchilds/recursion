@@ -16,12 +16,12 @@ var parseJSON = function(json) {
 		for(end; end < json.length; end++){
 			//for each character in the obj string, check if it is a comma that is outside of a quote.
 			if(json[end] === '"') { 
-				inQuotes === !inQuotes; 
+				inQuotes = !inQuotes; 
 			} else if(json[end] === ',' && !inQuotes){
 				elementIndices.push(end);
 			}
 		}
-		elementIndices.push(json.length-1);	//add the end of the obj as well to get last element (includes undefined/empty)
+		elementIndices.push(json.length);	//add the end of the obj/array as well to get last element (includes undefined/empty)
 
 		return elementIndices;
   }
@@ -36,11 +36,11 @@ var parseJSON = function(json) {
 		elementJson = json.slice(1, json.length - 1);
 		var start = 0;
 		for(var i = 0; i < elementIndices.length; i++){
-			if( findChar( ':', elementJson.slice(start,elementIndices[i] - 1) ) > 0 ){ //if it can find the colon
-				var colonIndex = findChar( ':', elementJson.slice(start,elementIndices[i] - 1) );
-				var spacer = 1;
-				if(elementJson[colonIndex + 1] === ' ') { spacer = 2;}
-				objOut[ determineParse( elementJson.slice(start, start + colonIndex) ) ] = determineParse( elementJson.slice(start + colonIndex + spacer, elementIndices[i] - 1) ); 
+			if( findChar( ':', elementJson.slice(start, elementIndices[i] - 1) ) > 0 ){ //if it can find the colon
+				var colonIndex = findChar( ':', elementJson.slice(start, elementIndices[i] - 1) );
+				var spacer = 0;
+				if(elementJson[start + colonIndex + 1] === ' ') { spacer = 1;}
+				objOut[ determineParse( elementJson.slice(start, start + colonIndex) ) ] = determineParse( elementJson.slice(start + colonIndex + 1 + spacer, elementIndices[i] - 1) ); 
 				//objOut[stringBeforeColon] = stringAfterColon
 				start = elementIndices[i] + 1;
 			}
@@ -53,34 +53,46 @@ var parseJSON = function(json) {
   	//input is a string, output is an array
   	//find each element and determineParse it
   	var array = [];
-  	var elementIndices = getElementIndices(json);
-
-  	elementJson = json.slice(1, json.length-1);
+  	elementJson = json.slice(1, json.length - 1);
+  	var elementIndices = getElementIndices(elementJson);
   	var start = 0;
   	for(var i = 0; i < elementIndices.length; i++){
   		if(elementJson.slice(start, elementIndices[i]) !== ""){
-  			array.push( determineParse( elementJson.slice(start, elementIndices[i] - 1) ) );
+  			array.push( determineParse( elementJson.slice(start, elementIndices[i]) ) );
   		}
-  		var spacer = 1;
-			if(elementJson[elementIndices[i] + 1] === ' ') { spacer = 2;}
-  		start = elementIndices[i] + spacer;
+  		var spacer = 0;
+			if(elementJson[elementIndices[i] + 1] === ' ') { spacer = 1;}
+  		start = elementIndices[i] + 1 + spacer;
   	}
 
   	return array;
   } //end parseArray
 
   function parseString(json){
-  	var outString = json.slice(1,json.length-1);
+  	var outString = json.slice(1,json.length - 1);
   	if(outString === undefined){ outString = ""; }
  		return outString;
   } //end parseString
 
   function parseValue(json){
+  	//will be given a string containing only chars, no quotes
+  	//need to check which of these set values this string is, convert
+  	//possible values: true, false, null, number
+
+  	if(json === 'null'){ return null; }
+  	else if(json === 'true') { return true; }
+  	else if(json === 'false') { return false; }
+  	else {
+  		var out = Number(json);
+  		if(out !== NaN){
+  			return out;
+  		}
+  	}
 
   } //end parseValue
 
   function findChar(char, string){
-  	//characters will be ending }, ending ], or :
+  	//character will be ':'
   	var objCounter = 0;
   	var arrayCounter = 0;
   	var indexOut = -1;
@@ -124,7 +136,7 @@ var parseJSON = function(json) {
 			//do something
 		} else {
 			//it's a value, run parseValue
-			return parseValue(json);
+			return parseValue(json.trim());
 		}
   	//get first char of element
   	//if it is {, we will parse obj
