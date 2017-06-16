@@ -6,10 +6,39 @@ var parseJSON = function(json) {
   //input always a string
 
   function parseObj(json){
-		//find : index for each property, determineParse each property
+		//find : index for each property, determineParse each property/key
+		var start = json[1];
+		var end = json[1];
 		var objOut = {};
+		var inQuotes = false;
+		var elementIndices = [];
 
+		//get all element indices (this is the index of a comma)
+		//iterate across json to find each element
+		for(end; end < json.length; end++){
+			//for each character in the obj string, check if it is a comma that is outside of a quote.
+			if(json[end] === '"') { 
+				inQuotes === !inQuotes; 
+			} else if(json[end] === ',' && !inQuotes){
+				elementIndices.push(json[end]);
+			}
+		}
+		elementIndices.push(json.length-1);	//add the end of the obj as well to get last element (includes undefined/empty)
 
+		//now, for each element, find the : and determineParse each key/pair
+		//we know that we just want the elements and not the outer object brackets, so let's remove those now
+		elementJson = json.slice(1, json.length-1);
+		start = 0;
+		for(var i = 0; i < elementIndices.length; i++){
+			if( findChar( ':', elementJson.slice(start,elementIndices[i]) ) > 0 ){ //if it can find the colon
+				var colonIndex = findChar( ':', elementJson.slice(start,elementIndices[i]) );
+				var spacer = 1;
+				if(elementJson[colonIndex + 1] === ' ') { spacer = 2;}
+				objOut[ determineParse( elementJson.slice(start, colonIndex) ) ] = determineParse( elementJson.slice(colonIndex + spacer, elementIndices[i]) ); 
+				//objOut[stringBeforeColon] = stringAfterColon
+				start = elementIndices[i];
+			}
+		}
 
 		return objOut;
   } //end parseObj
@@ -24,12 +53,35 @@ var parseJSON = function(json) {
   } //end parseArray
 
   function parseString(json){
- 
+  	var outString = json.slice(1,json.length-1);
+  	if(outString === undefined){ outString = ""; }
+ 		return outString;
   } //end parseString
 
   function parseValue(json){
 
   } //end parseValue
+
+  function findChar(char, string){
+  	//characters will be ending }, ending ], or :
+  	var objCounter = 0;
+  	var arrayCounter = 0;
+  	var indexOut = -1;
+
+  	for(var i = 1; i < string.length; i++){
+  		if(string[i] === '{'){ objCounter++; }
+  		else if(string[i] === '['){ arrayCounter++; }
+  		else if(string[i] === ']'){ arrayCounter--; }
+  		else if(string[i] === '}'){ objCounter--; }
+
+  		if(string[i] === char && objCounter === 0 && arrayCounter === 0 ){
+  			indexOut = i;
+  		}
+  	}
+
+  	return indexOut;
+
+  }
 
   function determineParse(json){
   	//run on json to run appropriate functions on each element as we come across it
