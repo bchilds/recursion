@@ -10,7 +10,6 @@ var getElementsByClassName = function(className) {
   //input: className that we are searching for (string)
   var output = [];
   var body = document.body;
-  console.log(body);
   //will need to search all the child nodes of the body, and all child nodes of the child nodes
   //need a function which checks for classname, number of childNodes, and then runs on each child node if any
 
