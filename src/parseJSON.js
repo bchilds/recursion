@@ -5,38 +5,44 @@
 var parseJSON = function(json) {
   //input always a string
 
-  function parseObj(json){
-		//find : index for each property, determineParse each property/key
-		var start = json[1];
-		var end = json[1];
-		var objOut = {};
-		var inQuotes = false;
-		var elementIndices = [];
-
+  function getElementIndices(json){
+  	//returns an array of the element indices
+  	
 		//get all element indices (this is the index of a comma)
 		//iterate across json to find each element
+  	var elementIndices = [];
+  	var end = 0;
+  	var inQuotes = false;
 		for(end; end < json.length; end++){
 			//for each character in the obj string, check if it is a comma that is outside of a quote.
 			if(json[end] === '"') { 
 				inQuotes === !inQuotes; 
 			} else if(json[end] === ',' && !inQuotes){
-				elementIndices.push(json[end]);
+				elementIndices.push(end);
 			}
 		}
 		elementIndices.push(json.length-1);	//add the end of the obj as well to get last element (includes undefined/empty)
 
+		return elementIndices;
+  }
+
+  function parseObj(json){
+		//find : index for each property, determineParse each property/key
+		var objOut = {};
+		var elementIndices = getElementIndices(json);
+
 		//now, for each element, find the : and determineParse each key/pair
 		//we know that we just want the elements and not the outer object brackets, so let's remove those now
-		elementJson = json.slice(1, json.length-1);
-		start = 0;
+		elementJson = json.slice(1, json.length - 1);
+		var start = 0;
 		for(var i = 0; i < elementIndices.length; i++){
-			if( findChar( ':', elementJson.slice(start,elementIndices[i]) ) > 0 ){ //if it can find the colon
-				var colonIndex = findChar( ':', elementJson.slice(start,elementIndices[i]) );
+			if( findChar( ':', elementJson.slice(start,elementIndices[i] - 1) ) > 0 ){ //if it can find the colon
+				var colonIndex = findChar( ':', elementJson.slice(start,elementIndices[i] - 1) );
 				var spacer = 1;
 				if(elementJson[colonIndex + 1] === ' ') { spacer = 2;}
-				objOut[ determineParse( elementJson.slice(start, colonIndex) ) ] = determineParse( elementJson.slice(colonIndex + spacer, elementIndices[i]) ); 
+				objOut[ determineParse( elementJson.slice(start, start + colonIndex) ) ] = determineParse( elementJson.slice(start + colonIndex + spacer, elementIndices[i] - 1) ); 
 				//objOut[stringBeforeColon] = stringAfterColon
-				start = elementIndices[i];
+				start = elementIndices[i] + 1;
 			}
 		}
 
@@ -47,7 +53,18 @@ var parseJSON = function(json) {
   	//input is a string, output is an array
   	//find each element and determineParse it
   	var array = [];
+  	var elementIndices = getElementIndices(json);
 
+  	elementJson = json.slice(1, json.length-1);
+  	var start = 0;
+  	for(var i = 0; i < elementIndices.length; i++){
+  		if(elementJson.slice(start, elementIndices[i]) !== ""){
+  			array.push( determineParse( elementJson.slice(start, elementIndices[i] - 1) ) );
+  		}
+  		var spacer = 1;
+			if(elementJson[elementIndices[i] + 1] === ' ') { spacer = 2;}
+  		start = elementIndices[i] + spacer;
+  	}
 
   	return array;
   } //end parseArray
