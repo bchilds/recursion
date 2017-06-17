@@ -50,7 +50,8 @@ var parseJSON = function(json) {
 				if(elementJson[start + colonIndex + 1] === ' ') { spacer = 1;}
 				objOut[ determineParse( elementJson.slice(start, start + colonIndex) ) ] = determineParse( elementJson.slice(start + colonIndex + 1 + spacer, elementIndices[i]) ); 
 				//objOut[stringBeforeColon] = stringAfterColon
-				start = elementIndices[i] + 1 + spacer;
+				start = elementIndices[i] + 1;
+        if(elementJson.charAt(start) === ' ') { start += 1; }
 			}
 		}
 
@@ -131,14 +132,16 @@ var parseJSON = function(json) {
   	var objCounter = 0;
   	var arrayCounter = 0;
   	var indexOut = -1;
+    var quoteCount = 0;
 
   	for(var i = 1; i < string.length; i++){
   		if(string.charAt(i) === '{'){ objCounter++; }
   		else if(string.charAt(i) === '['){ arrayCounter++; }
   		else if(string.charAt(i) === ']'){ arrayCounter--; }
   		else if(string.charAt(i) === '}'){ objCounter--; }
+      else if(string.charAt(i) === '"'){ quoteCount = (quoteCount + 1) % 2}
 
-  		if(string.charAt(i) === char && objCounter === 0 && arrayCounter === 0 ){
+  		if(string.charAt(i) === char && objCounter === 0 && arrayCounter === 0 && quoteCount === 0){
   			indexOut = i;
   		}
   	}
@@ -149,7 +152,7 @@ var parseJSON = function(json) {
 
   function determineParse(json){
   	//run on json to run appropriate functions on each element as we come across it
-  	
+  	json = json.trim();
 		var initChar = json.charAt(0);
 
 		if(initChar === '{'){
@@ -169,7 +172,7 @@ var parseJSON = function(json) {
 			if(json.charAt(json.length - 1) === '"'){
 				return parseString(json);
 			} else { 
-				throw new SyntaxError('Incomplete string, lacking closing "');
+				throw new SyntaxError('Incomplete string, ' + json + ' lacking closing "');
 			}
 		} else if(initChar === '\\'){
 			//do something
