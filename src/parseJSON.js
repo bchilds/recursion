@@ -134,7 +134,7 @@ var parseJSON = function(json) {
   	var indexOut = -1;
     var quoteCount = 0;
 
-  	for(var i = 1; i < string.length; i++){
+  	for(var i = 0; i < string.length; i++){
   		if(string.charAt(i) === '{'){ objCounter++; }
   		else if(string.charAt(i) === '['){ arrayCounter++; }
   		else if(string.charAt(i) === ']'){ arrayCounter--; }
